@@ -24,6 +24,7 @@ logger = logging.getLogger(__name__)
 
 # Create your views here.
 
+
 # Create a `login_request` view to handle sign in request
 @csrf_exempt
 def login_user(request):
@@ -46,6 +47,7 @@ def logout_request(request):
     data = {"userName": ""} # Return empty username
     return JsonResponse(data)
 
+
 # Create a `registration` view to handle sign up request
 @csrf_exempt
 def registration(request):
@@ -63,7 +65,7 @@ def registration(request):
         # Check if user already exists
         User.objects.get(username=username)
         username_exist = True
-    except:
+    except Exception as err:
         # If not, simply log this is a new user
         logger.debug("{} is new user".format(username))
     # If it is a new user
@@ -124,12 +126,13 @@ def get_dealer_details(request, dealer_id):
 
 # Create a `add_review` view to submit a review
 def add_review(request):
-    if(request.user.is_anonymous == False):
+    if(request.user.is_anonymous is False):
         data = json.loads(request.body)
         try:
-            response = post_review(data)
+            # response = post_review(data)
+            post_review(data)
             return JsonResponse({"status": 200})
-        except:
+        except Exception as err:
             return JsonResponse({"status": 401, "message": "Error in posting review"})
     else:
         return JsonResponse({"status": 403, "message": "Unauthorized"})
